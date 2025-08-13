@@ -30,7 +30,10 @@ app.post("/send-email", async (req, res) => {
     await sgMail.send(msg);
     res.json({ success: true, message: "Email sent successfully" });
   } catch (error) {
-    console.error(error);
+  console.error("Full error:", error);
+if (error.response) {
+  console.error("SendGrid Response Error:", error.response.body);
+}
     res.status(500).json({ success: false, error: error.message });
   }
 });
