@@ -28,14 +28,16 @@ app.post("/send-email", async (req, res) => {
   // };
 const msg = {
   to,
-  from: process.env.FROM_EMAIL,
+  from: {
+    email: process.env.FROM_EMAIL,
+    name: "RETRO FIFTY"
+  },
   subject,
   text: message,
   html: `
     <h1>${subject}</h1>
     <p>${message}</p>
   `,
-  
 };
   try {
     await sgMail.send(msg);
