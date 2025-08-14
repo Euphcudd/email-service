@@ -23,10 +23,7 @@ app.post("/send-email", async (req, res) => {
     total, 
     trackingId,
     customerAddressLine1,
-    district,
-    city,
-    state,
-    pincode
+  
   } = req.body;
 
   // Validate required fields
@@ -51,10 +48,7 @@ app.post("/send-email", async (req, res) => {
       total,
       trackingId,
       customerAddressLine1,
-      district,
-      city,
-      state,
-      pincode,
+     
       unsubscribe: "https://example.com/unsubscribe",
       unsubscribe_preferences: "https://example.com/preferences"
     }
