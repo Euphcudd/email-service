@@ -33,6 +33,7 @@ app.post("/send-email", async (req, res) => {
       email: process.env.FROM_EMAIL,
       name: "RETRO FIFTY"
     },
+     subject: "Your Order Has Been Shipped!",
     template_id: "d-fb8e666ee1de42afa9133334b1cd038a", // your template ID
     dynamic_template_data: {
       customerName,
