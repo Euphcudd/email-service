@@ -19,11 +19,17 @@ app.post("/send-email", async (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
+
+
   const msg = {
     to,
     from: process.env.FROM_EMAIL,
     subject,
     text: message,
+      html: `
+    <h1>Thank you for your order!</h1>
+    <p>We appreciate your purchase. Your order will be shipped soon.</p>
+  `,
   };
 
   try {
