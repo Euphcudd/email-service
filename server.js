@@ -13,40 +13,46 @@ app.use(express.json());
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 app.post("/send-email", async (req, res) => {
-  const { to, subject, message } = req.body;
+  const { 
+    to, 
+    customerName, 
+    orderId, 
+    items, 
+    total, 
+    trackingId 
+  } = req.body;
 
-  if (!to || !subject || !message) {
+  // Validate
+  if (!to || !customerName || !orderId || !items || !total || !trackingId) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  
-  // const msg = {
-  //   to,
-  //   from: process.env.FROM_EMAIL,
-  //   subject,
-  //   text: message,
-  // };
-const msg = {
-  to,
-  from: {
-    email: process.env.FROM_EMAIL,
-    name: "RETRO FIFTY"
-  },
-  subject,
-  text: message,
-  html: `
-    <h1>${subject}</h1>
-    <p>${message}</p>
-  `,
-};
+  const msg = {
+    to,
+    from: {
+      email: process.env.FROM_EMAIL,
+      name: "RETRO FIFTY"
+    },
+    template_id: "d-fb8e666ee1de42afa9133334b1cd038a", // your template ID
+    dynamic_template_data: {
+      customerName,
+      orderId,
+      items,
+      total,
+      trackingId,
+      unsubscribe: "https://example.com/unsubscribe",
+      unsubscribe_preferences: "https://example.com/preferences"
+    }
+  };
+
   try {
     await sgMail.send(msg);
     res.json({ success: true, message: "Email sent successfully" });
   } catch (error) {
-  console.error("Full error:", error);
-if (error.response) {
-  console.error("SendGrid Response Error:", error.response.body);
-}
+    console.error("Full error:", error);
+    if (error.response) {
+      console.error("SendGrid Response Error:", error.response.body);
+    }
     res.status(500).json({ success: false, error: error.message });
   }
 });
