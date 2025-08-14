@@ -18,11 +18,18 @@ app.post("/send-email", async (req, res) => {
     customerName, 
     orderId, 
     items, 
+    subtotal,
+    deliveryCharge,
     total, 
-    trackingId 
+    trackingId,
+    customerAddressLine1,
+    district,
+    city,
+    state,
+    pincode
   } = req.body;
 
-  // Validate
+  // Validate required fields
   if (!to || !customerName || !orderId || !items || !total || !trackingId) {
     return res.status(400).json({ error: "Missing required fields" });
   }
@@ -34,13 +41,20 @@ app.post("/send-email", async (req, res) => {
       name: "RETRO FIFTY"
     },
     subject: "Your Order Has Been Shipped!",
-    template_id: "d-fb8e666ee1de42afa9133334b1cd038a", // your template ID
+    template_id: "d-fb8e666ee1de42afa9133334b1cd038a",
     dynamic_template_data: {
       customerName,
       orderId,
       items,
+      subtotal,
+      deliveryCharge,
       total,
       trackingId,
+      customerAddressLine1,
+      district,
+      city,
+      state,
+      pincode,
       unsubscribe: "https://example.com/unsubscribe",
       unsubscribe_preferences: "https://example.com/preferences"
     }
@@ -57,6 +71,7 @@ app.post("/send-email", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
