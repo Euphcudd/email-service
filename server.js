@@ -92,7 +92,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 // Firestore listener for new orders with status "placed"
 // ----------------------
 db.collection("orders")
-  .where("status", "==", "placed")
+  .where("status", "==", "paid")
   .onSnapshot(snapshot => {
     snapshot.docChanges().forEach(change => {
       if (change.type === "added") {
