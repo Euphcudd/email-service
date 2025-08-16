@@ -50,8 +50,13 @@ async function sendOrderPushNotification(orderId) {
       tokens,
     };
 
-    const response = await admin.messaging().sendMulticast(message);
+    // Use sendEachForMulticast instead of sendMulticast
+    const response = await admin.messaging().sendEachForMulticast(message);
+
     console.log(`Push notifications sent: ${response.successCount}`);
+    if (response.failureCount > 0) {
+      console.error("Some notifications failed:", response.responses.filter(r => !r.success));
+    }
   } catch (error) {
     console.error("Error sending push notification:", error);
   }
