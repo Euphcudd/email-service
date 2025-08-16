@@ -57,21 +57,22 @@ async function sendOrderPushNotification(orderId) {
     if (!tokens.length) return;
 
     // 4. Build the notification (as data only)
-    const message = {
-      data: {
-        title: "📦 New Order Received",
-        body: 
+const message = {
+  data: {
+    title: "New Order Received",
+    body: 
 `-------------------------
-🆔 Order ID: #${orderId}
-👤 Name: ${customerName}
-📸 Insta: ${instaHandle}
+Order ID: #${orderId}
+Name: ${customerName}
+Insta: ${instaHandle}
 -------------------------`,
-        orderId: orderId,
-        customerName: customerName,
-        instaHandle: instaHandle,
-      },
-      tokens,
-    };
+    orderId,
+    customerName,
+    instaHandle,
+    click_action: "https://retro-fifty.web.app", // optional, for click redirect
+  },
+  tokens,
+};
 
     // 5. Send notification
     const response = await admin.messaging().sendEachForMulticast(message);
