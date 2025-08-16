@@ -1,81 +1,8 @@
-// import express from "express";
-// import cors from "cors";
-// import dotenv from "dotenv";
-// import sgMail from "@sendgrid/mail";
-
-// dotenv.config();
-
-// const app = express();
-// app.use(cors());
-// app.use(express.json());
-
-// // Set SendGrid API Key
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// app.post("/send-email", async (req, res) => {
-//   const { 
-//     to, 
-//     customerName, 
-//     orderId, 
-//     items, 
-//     subtotal,
-//     deliveryCharge,
-//     total, 
-//     trackingId,
-//     customerAddressLine1,
-  
-//   } = req.body;
-
-//   // Validate required fields
-//   if (!to || !customerName || !orderId || !items || !total || !trackingId) {
-//     return res.status(400).json({ error: "Missing required fields" });
-//   }
-
-//   const msg = {
-//     to,
-//     from: {
-//       email: process.env.FROM_EMAIL,
-//       name: "RETRO FIFTY"
-//     },
-//     subject: "Your Order Has Been Shipped!",
-//     template_id: "d-fb8e666ee1de42afa9133334b1cd038a",
-//     dynamic_template_data: {
-//       customerName,
-//       orderId,
-//       items,
-//       subtotal,
-//       deliveryCharge,
-//       total,
-//       trackingId,
-//       customerAddressLine1,
-     
-//       unsubscribe: "https://example.com/unsubscribe",
-//       unsubscribe_preferences: "https://example.com/preferences"
-//     }
-//   };
-
-//   try {
-//     await sgMail.send(msg);
-//     res.json({ success: true, message: "Email sent successfully" });
-//   } catch (error) {
-//     console.error("Full error:", error);
-//     if (error.response) {
-//       console.error("SendGrid Response Error:", error.response.body);
-//     }
-//     res.status(500).json({ success: false, error: error.message });
-//   }
-// });
-
-
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-// server.js
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import sgMail from "@sendgrid/mail";
-import { db, messaging } from "./firebase.js"; // <-- import Firebase Admin here
+import { db, admin } from "./firebase.js"; // import admin instead of messaging
 
 dotenv.config();
 
@@ -89,7 +16,7 @@ app.use(express.json());
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // ----------------------
-// Firestore listener for new orders with status "placed"
+// Firestore listener for new orders with status "paid"
 // ----------------------
 db.collection("orders")
   .where("status", "==", "paid")
@@ -123,7 +50,7 @@ async function sendOrderPushNotification(orderId) {
       tokens,
     };
 
-    const response = await messaging.sendMulticast(message);
+    const response = await admin.messaging().sendMulticast(message);
     console.log(`Push notifications sent: ${response.successCount}`);
   } catch (error) {
     console.error("Error sending push notification:", error);
