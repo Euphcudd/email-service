@@ -33,27 +33,47 @@ db.collection("orders")
   });
 
 // ----------------------
-// Function to send push notifications
+// Function to send push notifications (with data payload)
 // ----------------------
 async function sendOrderPushNotification(orderId) {
   try {
+    // 1. Fetch the order document
+    const orderDoc = await db.collection("orders").doc(orderId).get();
+    if (!orderDoc.exists) {
+      console.error("Order not found:", orderId);
+      return;
+    }
+
+    const orderData = orderDoc.data();
+
+    // 2. Extract values from order document
+    const customerName = orderData.address?.name || "Unknown";
+    const instaHandle = orderData.address?.insta || "N/A";
+
+    // 3. Fetch admin tokens
     const tokensSnapshot = await db.collection("adminTokens").get();
     const tokens = tokensSnapshot.docs.map(doc => doc.data().token);
 
     if (!tokens.length) return;
 
-const message = {
-  data: {
-    title: "New Order Received",
-    body: `-------------------------
-Order ID: #${orderId}
-Name: ${customerName}
-Insta: ${instaHandle}
+    // 4. Build the notification (as data only)
+    const message = {
+      data: {
+        title: "📦 New Order Received",
+        body: 
+`-------------------------
+🆔 Order ID: #${orderId}
+👤 Name: ${customerName}
+📸 Insta: ${instaHandle}
 -------------------------`,
-  },
-  tokens,
-};
-    // Use sendEachForMulticast instead of sendMulticast
+        orderId: orderId,
+        customerName: customerName,
+        instaHandle: instaHandle,
+      },
+      tokens,
+    };
+
+    // 5. Send notification
     const response = await admin.messaging().sendEachForMulticast(message);
 
     console.log(`Push notifications sent: ${response.successCount}`);
