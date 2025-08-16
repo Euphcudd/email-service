@@ -42,14 +42,17 @@ async function sendOrderPushNotification(orderId) {
 
     if (!tokens.length) return;
 
-    const message = {
-      notification: {
-        title: "New Order Placed",
-        body: `Order #${orderId} has been placed.`,
-      },
-      tokens,
-    };
-
+const message = {
+  data: {
+    title: "New Order Received",
+    body: `-------------------------
+Order ID: #${orderId}
+Name: ${customerName}
+Insta: ${instaHandle}
+-------------------------`,
+  },
+  tokens,
+};
     // Use sendEachForMulticast instead of sendMulticast
     const response = await admin.messaging().sendEachForMulticast(message);
 
