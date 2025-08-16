@@ -1,5 +1,11 @@
+// Instead of:
+// import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
+
+// Do this:
+const serviceAccount = require("./serviceAccountKey.json");
+
+// And if using ES module syntax elsewhere, you can still do:
 import admin from "firebase-admin";
-import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
